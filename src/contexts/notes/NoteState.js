@@ -7,6 +7,7 @@ const NoteState = (props) => {
     const [hideId, setHideId] = useState("");
     const [notes, setnotes] = useState([]);
     const [authToken, setAuthToken] = useState("");
+    const [status, setstatus] = useState(false);
     let navigate = useNavigate();
 
 
@@ -26,8 +27,10 @@ const NoteState = (props) => {
 
         })
         const json = await response.json();
+        console.log(json)
         if (json.status) {
             setAuthToken(json);
+            setstatus(json.status)
             navigate("/")
         }
         else {
@@ -53,6 +56,8 @@ const NoteState = (props) => {
         const json = await response.json();
         if (json.status) {
             setAuthToken(json);
+            setstatus(json.status)
+
             navigate("/")
         }
         else {
@@ -149,7 +154,7 @@ const NoteState = (props) => {
 
 
     return (
-        <Notecontext.Provider value={{ notes, addNote, deleteNote, getNotes, hideEdit, setHideEdit, hideId, setHideId, editNote, signIn, signUp }}>
+        <Notecontext.Provider value={{ notes, addNote, deleteNote, getNotes, hideEdit, setHideEdit, hideId, setHideId, editNote, signIn, signUp, status }}>
             {props.children}
         </Notecontext.Provider>
     )

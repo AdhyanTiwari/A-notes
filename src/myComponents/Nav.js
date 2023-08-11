@@ -1,10 +1,13 @@
 // rfce
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import {
     Link, useLocation
 } from "react-router-dom";
+import notecontext from '../contexts/notes/notecontext';
 
 function Nav() {
+    const a = useContext(notecontext);
+    const { status } = a;
     let location = useLocation();
 
     return (
@@ -25,9 +28,12 @@ function Nav() {
                             </li>
 
                         </ul>
-                        <div className="d-flex" role="search">
+                        <div  role="search" style={status?{display:"none"}:{}}>
                             <Link to={"/signup"}><button className="btn btn-primary btn-sm mx-1" >Sign Up</button></Link>
                             <Link to={"/signin"}><button className="btn btn-primary btn-sm mx-1"> Sign In</button></Link>
+                        </div>
+                        <div  role="search" style={status?{}:{display:"none"}}>
+                            <button className="btn btn-primary btn-sm mx-1">Log Out</button>
                         </div>
                     </div>
                 </div>

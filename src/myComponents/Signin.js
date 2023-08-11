@@ -8,11 +8,12 @@ function Signin() {
   const onChange = (e) => {
     setNote({ ...note, [e.target.name]: e.target.value })
   }
-  const onClick = () => {
+  const onClick = (e) => {
+    e.preventDefault();
     signIn(note.email, note.password)
   }
   return (
-    <div className='container border rounded' style={{ width: "40%", padding: "1rem" }}>
+    <form className='container border rounded' style={{ width: "40%", padding: "1rem" }}>
       <div style={{ textAlign: "center" }}>
         <h1>Sign In!</h1>
       </div>
@@ -25,9 +26,9 @@ function Signin() {
           <label htmlFor="exampleFormControlInput1" className="form-label">password:</label>
           <input type="password" onChange={onChange} className="form-control" id="exampleFormControlInput1" name='password' value={note.password} />
         </div >
-        <button className='btn btn-primary' style={{ width: "100%" }} onClick={onClick}>Sign In</button>
+        <button type='submit' className='btn btn-primary' style={{ width: "100%" }} onClick={onClick}>Sign In</button>
       </div>
-    </div>
+    </form>
   )
 }
 
