@@ -13,15 +13,10 @@ function Signup() {
   }
   const onClick = (e) => {
     e.preventDefault();
-    if (note.Cpassword === note.password) {
       signUp(note.email, note.password, note.name)
-    }
-    else {
-      alert("password and confirm password does not match")
-    }
   }
   return (
-    <form className='container border rounded' style={{ width: "40%", padding: "1rem" }}>
+    <form onSubmit={onClick} className='container border rounded' style={{ width: "40%", padding: "1rem" }}>
       <div style={{ textAlign: "center" }}>
         <h1>Sign Up!</h1>
       </div>
@@ -43,7 +38,7 @@ function Signup() {
           <input type="password" onChange={onChange} className="form-control" id="exampleFormControlInput1" name='Cpassword' value={note.Cpassword} />
         </div >
         <Link to={"/signin"}>Already a user? Sign In</Link>
-        <button type='submit' className='btn btn-primary mt-3' style={{ width: "100%" }} onSubmit={onClick}>Sign Up</button>
+        <button type='submit' className='btn btn-primary mt-3' style={{ width: "100%" }} >Sign Up</button>
       </div>
     </form>
   )

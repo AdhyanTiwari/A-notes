@@ -1,5 +1,5 @@
 // rfce
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import {
     Link, useLocation
 } from "react-router-dom";
@@ -9,6 +9,10 @@ function Nav() {
     const a = useContext(notecontext);
     const { status } = a;
     let location = useLocation();
+
+    const del = () => {
+        localStorage.setItem("status", false)
+    }
 
     return (
         <div className='position-fixed top-0 start-0' style={{ minWidth: "100%", zIndex: "2" }}>
@@ -28,13 +32,13 @@ function Nav() {
                             </li>
 
                         </ul>
-                        <div  role="search" style={status?{display:"none"}:{}}>
+                        <div role="search" style={status ? { display: "none" } : {}}>
                             <Link to={"/signup"}><button className="btn btn-primary btn-sm mx-1" >Sign Up</button></Link>
                             <Link to={"/signin"}><button className="btn btn-primary btn-sm mx-1"> Sign In</button></Link>
                         </div>
-                        <div  role="search" style={status?{}:{display:"none"}}>
-                            <button className="btn btn-primary btn-sm mx-1">Log Out</button>
-                        </div>
+                        <form onSubmit={del} style={status ? {} : { display: "none" }}>
+                            <button type="submit" className="btn btn-primary btn-sm mx-1" >Log Out</button>
+                        </form>
                     </div>
                 </div>
             </nav>

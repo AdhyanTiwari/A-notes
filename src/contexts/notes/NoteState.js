@@ -3,11 +3,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const NoteState = (props) => {
+    let statu = localStorage.getItem("status");
     const [hideEdit, setHideEdit] = useState(true);
     const [hideId, setHideId] = useState("");
     const [notes, setnotes] = useState([]);
-    const [authToken, setAuthToken] = useState("");
-    const [status, setstatus] = useState(false);
+    const [status, setstatus] = useState(statu === "true" ? true : false);
     let navigate = useNavigate();
 
 
@@ -29,12 +29,13 @@ const NoteState = (props) => {
         const json = await response.json();
         console.log(json)
         if (json.status) {
-            setAuthToken(json);
-            setstatus(json.status)
+            setstatus(json.status);
+            localStorage.setItem("status", true);
+            localStorage.setItem("token", json.authtoken);
             navigate("/")
         }
         else {
-            alert("user already exists")
+            alert("invalid credentials")
         }
     }
 
@@ -55,9 +56,9 @@ const NoteState = (props) => {
         })
         const json = await response.json();
         if (json.status) {
-            setAuthToken(json);
-            setstatus(json.status)
-
+            setstatus(json.status);
+            localStorage.setItem("status", true);
+            localStorage.setItem("token", json.authtoken);
             navigate("/")
         }
         else {
@@ -68,12 +69,12 @@ const NoteState = (props) => {
 
     //GET NOTES
     const getNotes = async () => {
-        if (authToken.status) {
+        if (status) {
             const response = await fetch("http://localhost:5000/api/notes/getnotes", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    "auth-token": authToken.authtoken
+                    "auth-token": localStorage.getItem("token")
                 }
             })
             const json = await response.json();
@@ -106,7 +107,7 @@ const NoteState = (props) => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "auth-token": authToken.authtoken
+                "auth-token": localStorage.getItem("token")
             },
             body: JSON.stringify(data)
         })
@@ -122,7 +123,7 @@ const NoteState = (props) => {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "auth-token": authToken.authtoken
+                "auth-token": localStorage.getItem("token")
             }
         })
         const json = await response.json();
@@ -143,7 +144,7 @@ const NoteState = (props) => {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "auth-token": authToken.authtoken
+                "auth-token": localStorage.getItem("token")
             },
             body: JSON.stringify(data)
         })
@@ -154,7 +155,7 @@ const NoteState = (props) => {
 
 
     return (
-        <Notecontext.Provider value={{ notes, addNote, deleteNote, getNotes, hideEdit, setHideEdit, hideId, setHideId, editNote, signIn, signUp, status }}>
+        <Notecontext.Provider value={{ notes, addNote, deleteNote, getNotes, hideEdit, setHideEdit, hideId, setHideId, editNote, signIn, signUp, status,setstatus }}>
             {props.children}
         </Notecontext.Provider>
     )
