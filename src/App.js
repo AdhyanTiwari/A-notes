@@ -5,7 +5,6 @@ import Nav from './myComponents/Nav';
 import Signup from "./myComponents/Signup"
 import Signin from "./myComponents/Signin"
 import {
-  BrowserRouter as Router,
   Routes,
   Route
 } from "react-router-dom";
@@ -15,7 +14,6 @@ function App() {
   return (
     <>
       <NoteState>
-        <Router>
           <Nav />
           <div className="container" style={{ marginTop: "5rem" }}>
             <Routes>
@@ -38,7 +36,6 @@ function App() {
 
             </Routes>
           </div>
-        </Router >
       </NoteState>
 
     </>

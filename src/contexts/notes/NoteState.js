@@ -1,18 +1,21 @@
 import Notecontext from "./notecontext";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const NoteState = (props) => {
     const [hideEdit, setHideEdit] = useState(true);
     const [hideId, setHideId] = useState("");
     const [notes, setnotes] = useState([]);
     const [authToken, setAuthToken] = useState("");
+    let navigate = useNavigate();
 
 
-    const signUp = async (email, password,name) => {
+    //SIGN UP
+    const signUp = async (email, password, name) => {
         const data = {
             email: email,
             password: password,
-            name:name
+            name: name
         }
         const response = await fetch("http://localhost:5000/api/auth/createuser", {
             method: "POST",
@@ -23,10 +26,17 @@ const NoteState = (props) => {
 
         })
         const json = await response.json();
-        setAuthToken(json)
-        console.log(authToken.authtoken)
+        if (json.status) {
+            setAuthToken(json);
+            navigate("/")
+        }
+        else {
+            alert("user already exists")
+        }
     }
 
+
+    //SIGN IN 
     const signIn = async (email, password) => {
         const data = {
             email: email,
@@ -41,30 +51,37 @@ const NoteState = (props) => {
 
         })
         const json = await response.json();
-        if(json.error="password does not match"){
-            console.log("bale bale ho gaya")
+        if (json.status) {
+            setAuthToken(json);
+            navigate("/")
         }
-        else{
-        setAuthToken(json)
-
+        else {
+            alert("invalid credentials")
         }
-        
     }
 
+
+    //GET NOTES
     const getNotes = async () => {
-
-        const response = await fetch("http://localhost:5000/api/notes/getnotes", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRjOTI4NzkzNGFhYzNjOWQ1OTQwOTgwIn0sImlhdCI6MTY5MDkxMDk5M30.iIfRoK_J1hfJqRX0Ex3DAUWdemVyKLMELnIgVjKGBNE"
-            }
-        })
-        const json = await response.json();
-        setnotes(json)
+        if (authToken.status) {
+            const response = await fetch("http://localhost:5000/api/notes/getnotes", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "auth-token": authToken.authtoken
+                }
+            })
+            const json = await response.json();
+            setnotes(json)
+        }
+        else {
+            navigate('/signin')
+        }
 
     }
 
+
+    //ADD NOTE
     const addNote = async (title, description, tag) => {
         let data = {}
         if (tag === "") {
@@ -84,7 +101,7 @@ const NoteState = (props) => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRjOTI4NzkzNGFhYzNjOWQ1OTQwOTgwIn0sImlhdCI6MTY5MDkxMDk5M30.iIfRoK_J1hfJqRX0Ex3DAUWdemVyKLMELnIgVjKGBNE"
+                "auth-token": authToken.authtoken
             },
             body: JSON.stringify(data)
         })
@@ -93,18 +110,23 @@ const NoteState = (props) => {
         console.log(json)
     }
 
+
+    //DELETE NOTE
     const deleteNote = async (id) => {
         const response = await fetch(`http://localhost:5000/api/notes/delete/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRjOTI4NzkzNGFhYzNjOWQ1OTQwOTgwIn0sImlhdCI6MTY5MDkxMDk5M30.iIfRoK_J1hfJqRX0Ex3DAUWdemVyKLMELnIgVjKGBNE"
+                "auth-token": authToken.authtoken
             }
         })
         const json = await response.json();
         console.log(json);
         getNotes();
     }
+
+
+    //EDIT NOTE
     const editNote = async (id, title, description, tag) => {
         let data = {
             title: title,
@@ -116,7 +138,7 @@ const NoteState = (props) => {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRjOTI4NzkzNGFhYzNjOWQ1OTQwOTgwIn0sImlhdCI6MTY5MDkxMDk5M30.iIfRoK_J1hfJqRX0Ex3DAUWdemVyKLMELnIgVjKGBNE"
+                "auth-token": authToken.authtoken
             },
             body: JSON.stringify(data)
         })

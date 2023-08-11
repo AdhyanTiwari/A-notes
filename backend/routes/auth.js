@@ -13,15 +13,16 @@ router.post("/createuser", [
     body("email").isEmail(),
     body("password").isLength({ min: 5 })
 ], async (req, res) => {
+    let status=false;
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        return res.status(400).json({ errors: result.array() });
+        return res.status(400).json({ status:status,errors: result.array() });
     }
 
     try {
         let user = await User.findOne({ email: req.body.email });
         if (user) {
-            return res.status(400).json({ error: "user already exists" })
+            return res.status(400).json({ status:status,error: "user already exists" })
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -39,10 +40,11 @@ router.post("/createuser", [
         }
 
         const authtoken = jwt.sign(data, process.env.JWT_SECRET);
-        return res.json({ authtoken });
+        status=true;
+        return res.json({status:status, authtoken });
 
     } catch (error) {
-        res.status(500).json({ error: "internal error occured" })
+        res.status(500).json({status:status, error: "internal error occured" })
     }
 })
 
@@ -52,19 +54,20 @@ router.post("/login", [
     body("email").isEmail(),
     body("password").exists()
 ], async (req, res) => {
+    let status=false;
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        return res.status(400).json({ errors: result.array() });
+        return res.status(400).json({status:status, errors: result.array() });
     }
     try {
         const user = await User.findOne({ email: req.body.email })
         if (!user) {
-            return res.status(400).json({ error: "user does not exist" });
+            return res.status(400).json({ status:status,error: "user does not exist" });
         }
 
         const compared = await bcrypt.compare(req.body.password, user.password);
         if (!compared) {
-            return res.status(400).json({ error: "password does not match" })
+            return res.status(400).json({status:status, error: "password does not match" })
         }
         const data = await {
             user: {
@@ -73,10 +76,11 @@ router.post("/login", [
         }
 
         const authtoken = jwt.sign(data, process.env.JWT_SECRET);
-        return res.json({ authtoken });
+        status=true;
+        return res.json({ status:status,authtoken });
 
     } catch (error) {
-        res.status(500).json({ error: "internal error occured" })
+        res.status(500).json({status:status, error: "internal error occured" })
     }
 })
 
